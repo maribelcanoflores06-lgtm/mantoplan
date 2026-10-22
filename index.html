@@ -2,82 +2,148 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MantoPlan · Gestión de Mantenimiento</title>
+<title>MantoPlan · Central de Mantenimiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<!-- ===== LOGIN / REGISTRO ===== -->
 <div id="auth" class="auth hidden">
+  <div class="auth-hero">
+    <div class="logo-badge lg">MP</div>
+    <h1>MantoPlan</h1>
+    <p>Central de mantenimiento para planta textil. Máquinas, repuestos, stock y órdenes de trabajo en un solo lugar.</p>
+    <ul class="hero-list"><li>📊 Indicadores en tiempo real</li><li>🧾 Órdenes de trabajo con costo estimado</li><li>🔔 Alertas de stock crítico</li></ul>
+  </div>
   <div class="auth-card">
-    <div class="brand-auth">⚙️ <b>MantoPlan</b><small>Mantenimiento textil</small></div>
+    <h2 id="a-titulo">Bienvenida de nuevo</h2><p class="muted" id="a-sub">Ingresa con tu cuenta de la planta</p>
     <div class="tabs"><button type="button" id="tab-login" class="tab active">Iniciar sesión</button><button type="button" id="tab-signup" class="tab">Crear cuenta</button></div>
     <form id="form-auth" novalidate>
       <label id="lbl-nombre" class="hidden">Nombre completo<input id="a-nombre" type="text" placeholder="Ej: Maribel Cano"></label>
       <label>Correo<input id="a-email" type="email" placeholder="tu@correo.com" autocomplete="email"></label>
       <label>Contraseña<input id="a-pass" type="password" placeholder="Mínimo 6 caracteres" autocomplete="current-password"></label>
-      <button class="btn" id="a-btn" type="submit">Entrar</button>
+      <button class="btn btn-block" id="a-btn" type="submit">Entrar</button>
       <div id="a-msg"></div>
     </form>
   </div>
 </div>
-<aside class="sidebar">
-  <div class="brand">⚙️ <b>MantoPlan</b><small>Mantenimiento textil</small></div>
+
+<!-- ===== APP ===== -->
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="logo-badge">MP</div><div><b>MantoPlan</b><small>Central de Mantenimiento</small></div></div>
+  <div class="nav-group">OPERACIÓN</div>
   <nav>
-    <a href="#dashboard" data-view="dashboard" class="active">📊 Dashboard</a>
-    <a href="#maquinas" data-view="maquinas">🏭 Máquinas</a>
-    <a href="#repuestos" data-view="repuestos">🔩 Repuestos</a>
-    <a href="#cambio" data-view="cambio">🛠️ Registrar cambio</a>
-    <a href="#historial" data-view="historial">📜 Historial</a>
+    <a href="#dashboard" data-view="dashboard"><i>📊</i>Dashboard</a>
+    <a href="#ot" data-view="ot"><i>🧾</i>Órdenes de trabajo <span class="nav-count" id="nav-ot"></span></a>
+    <a href="#cambio" data-view="cambio"><i>🛠️</i>Registrar cambio</a>
+    <a href="#historial" data-view="historial"><i>📜</i>Historial</a>
   </nav>
-  <div class="user hidden" id="usuario"><span id="u-email"></span><button class="btn-sec" id="logout">Cerrar sesión</button></div>
-  <div class="mode" id="modo"></div>
-  <button class="btn-sec" id="reset">↺ Restaurar datos demo</button>
+  <div class="nav-group">CATÁLOGOS MAESTROS</div>
+  <nav>
+    <a href="#maquinas" data-view="maquinas"><i>🏭</i>Máquinas</a>
+    <a href="#repuestos" data-view="repuestos"><i>🔩</i>Repuestos <span class="nav-count warn" id="nav-rep"></span></a>
+  </nav>
+  <div class="side-foot">
+    <div class="mode"><span class="dot"></span><span id="modo"></span></div>
+    <div class="user-card">
+      <div class="avatar" id="u-ini">MP</div>
+      <div class="u-info"><b id="u-nombre">—</b><small id="u-email"></small><span class="role" id="u-rol"></span></div>
+      <button class="icon-btn" id="logout" title="Cerrar sesión">⎋</button>
+    </div>
+  </div>
 </aside>
-<main>
+
+<div class="main">
+  <header class="topbar">
+    <button class="icon-btn menu" id="menu">☰</button>
+    <div><h1 id="titulo">Dashboard</h1><p id="subtitulo" class="muted"></p></div>
+    <div class="actions" id="acciones"></div>
+  </header>
+
+  <div class="content">
+  <!-- DASHBOARD -->
   <section id="view-dashboard" class="view">
-    <h1>Dashboard</h1><p class="sub">Resumen de la planta (datos de ejemplo)</p>
     <div class="kpis" id="kpis"></div>
-    <div class="grid2">
-      <div class="card"><h3>⚠️ Repuestos con stock bajo</h3><div id="dash-bajo"></div></div>
-      <div class="card"><h3>🕒 Últimos cambios</h3><div id="dash-ultimos"></div></div>
+    <div class="grid3">
+      <div class="card span2"><div class="card-h"><h3>Consumo de repuestos por máquina</h3><span class="muted">Valor S/ de cambios registrados</span></div><div id="ch-maquina"></div></div>
+      <div class="card"><div class="card-h"><h3>Stock crítico</h3><span class="chip c-crit" id="crit-count"></span></div><div id="dash-crit"></div></div>
+      <div class="card span2"><div class="card-h"><h3>Cambios por mes</h3><span class="muted">Últimos 6 meses</span></div><div id="ch-mes"></div></div>
+      <div class="card"><div class="card-h"><h3>Top repuestos</h3><span class="muted">Unidades usadas</span></div><div id="ch-top"></div></div>
     </div>
   </section>
-  <section id="view-maquinas" class="view hidden">
-    <h1>Máquinas</h1><p class="sub">Máquina → Componente → Subcomponente</p>
-    <div class="card" id="arbol"></div>
+
+  <!-- ÓRDENES DE TRABAJO -->
+  <section id="view-ot" class="view hidden">
+    <div class="ot-tabs" id="ot-filtro">
+      <button class="pill active" data-f="">Todas</button><button class="pill" data-f="preventivo">Preventivas</button><button class="pill" data-f="correctivo">Correctivas</button>
+    </div>
+    <div class="kanban" id="kanban"></div>
+    <div class="split hidden" id="ot-nueva">
+      <form id="form-ot" class="card form" novalidate>
+        <div class="card-h full"><h3>Nueva orden de trabajo</h3><button type="button" class="btn-ghost" id="ot-cancelar">Cancelar</button></div>
+        <label>Máquina<select id="o-maquina"></select></label>
+        <label>Tipo<select id="o-tipo"><option value="preventivo">Preventivo</option><option value="correctivo">Correctivo</option></select></label>
+        <label>Prioridad<select id="o-prioridad"><option value="baja">Baja</option><option value="media" selected>Media</option><option value="alta">Alta</option></select></label>
+        <label>Fecha programada<input id="o-fecha" type="date"></label>
+        <label class="full">Descripción<textarea id="o-desc" rows="2" placeholder="Ej: Cambio de guarnición del cilindro principal"></textarea></label>
+        <div class="full"><div class="lbl">Repuestos previstos</div>
+          <div class="add-row"><select id="o-rep"></select><input id="o-cant" type="number" min="1" value="1"><button type="button" class="btn-sec" id="o-add">+ Agregar</button></div>
+          <div id="o-items"></div></div>
+        <div class="full"><button class="btn" type="submit">Crear orden de trabajo</button></div>
+      </form>
+      <aside class="card resumen" id="ot-resumen"></aside>
+    </div>
   </section>
-  <section id="view-repuestos" class="view hidden">
-    <h1>Repuestos</h1><p class="sub">Stock actual vs stock mínimo</p>
-    <input id="buscar-rep" class="input" placeholder="Buscar repuesto o código...">
-    <div class="card"><table><thead><tr><th>Código</th><th>Repuesto</th><th>Subcomponente</th><th>Stock</th><th>Mínimo</th><th>Estado</th></tr></thead><tbody id="tabla-rep"></tbody></table></div>
-  </section>
+
+  <!-- REGISTRAR CAMBIO -->
   <section id="view-cambio" class="view hidden">
-    <h1>Registrar cambio de repuesto</h1><p class="sub">Descuenta stock y agrega al historial</p>
-    <form id="form-cambio" class="card form" novalidate>
-      <label>Máquina<select id="f-maquina" required></select></label>
-      <label>Componente<select id="f-componente" required></select></label>
-      <label>Subcomponente<select id="f-sub" required></select></label>
-      <label>Repuesto<select id="f-repuesto" required></select></label>
-      <label>Cantidad<input id="f-cantidad" type="number" min="1" step="1" value="1" required></label>
-      <label>Fecha<input id="f-fecha" type="date" required></label>
-      <label>Técnico<input id="f-tecnico" type="text" placeholder="Nombre del técnico" required></label>
-      <label class="full">Observación (opcional)<textarea id="f-obs" rows="2"></textarea></label>
-      <div class="full"><button class="btn" type="submit">Guardar cambio</button></div>
-      <div id="msg" class="full"></div>
-    </form>
-  </section>
-  <section id="view-historial" class="view hidden">
-    <h1>Historial de cambios</h1>
-    <div class="filtros">
-      <select id="h-maquina" class="input"></select>
-      <input id="h-desde" type="date" class="input" title="Desde">
-      <input id="h-hasta" type="date" class="input" title="Hasta">
-      <input id="h-texto" class="input" placeholder="Técnico o repuesto...">
+    <div class="split">
+      <form id="form-cambio" class="card form" novalidate>
+        <div class="card-h full"><h3>Datos del cambio</h3></div>
+        <label>Máquina<select id="f-maquina"></select></label>
+        <label>Componente<select id="f-componente"></select></label>
+        <label>Subcomponente<select id="f-sub"></select></label>
+        <label>Repuesto<select id="f-repuesto"></select></label>
+        <label>Cantidad<input id="f-cantidad" type="number" min="1" step="1" value="1"></label>
+        <label>Fecha<input id="f-fecha" type="date"></label>
+        <label class="full">Técnico<input id="f-tecnico" type="text" placeholder="Nombre del técnico"></label>
+        <label class="full">Observación (opcional)<textarea id="f-obs" rows="2"></textarea></label>
+        <div class="full"><button class="btn" type="submit">Guardar cambio</button></div>
+      </form>
+      <aside class="card resumen" id="cambio-resumen"></aside>
     </div>
-    <div class="card"><table><thead><tr><th>Fecha</th><th>Máquina</th><th>Componente / Sub</th><th>Repuesto</th><th>Cant.</th><th>Técnico</th><th>Obs.</th></tr></thead><tbody id="tabla-hist"></tbody></table></div>
   </section>
-</main>
+
+  <!-- HISTORIAL -->
+  <section id="view-historial" class="view hidden">
+    <div class="card">
+      <div class="filtros">
+        <select id="h-maquina"></select>
+        <input id="h-desde" type="date" title="Desde"><input id="h-hasta" type="date" title="Hasta">
+        <input id="h-texto" placeholder="🔍 Técnico, repuesto u OT...">
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Máquina</th><th>Componente / Sub</th><th>Repuesto</th><th class="r">Cant.</th><th class="r">Costo</th><th>Técnico</th><th>Obs.</th></tr></thead><tbody id="tabla-hist"></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- MÁQUINAS -->
+  <section id="view-maquinas" class="view hidden"><div class="maq-grid" id="arbol"></div></section>
+
+  <!-- REPUESTOS -->
+  <section id="view-repuestos" class="view hidden">
+    <div class="kpis k3" id="rep-kpis"></div>
+    <div class="card">
+      <div class="filtros f2"><input id="buscar-rep" placeholder="🔍 Buscar repuesto o código..."><select id="rep-estado"><option value="">Todos los estados</option><option value="ok">En stock</option><option value="bajo">Stock bajo</option><option value="crit">Crítico</option></select></div>
+      <div class="table-wrap"><table><thead><tr><th>Código</th><th>Repuesto</th><th>Ubicación</th><th class="r">Precio unit.</th><th class="r">Stock</th><th class="r">Mínimo</th><th class="r">Valor</th><th>Estado</th></tr></thead><tbody id="tabla-rep"></tbody></table></div>
+    </div>
+  </section>
+  </div>
+</div>
+</div>
+<div id="toasts"></div>
 <script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="data.js" defer></script>
-<script src="app.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
 </body></html>
