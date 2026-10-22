@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MantoPlan · Gestión de Mantenimiento</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand">⚙️ <b>MantoPlan</b><small>Mantenimiento textil</small></div>
+  <nav>
+    <a href="#dashboard" data-view="dashboard" class="active">📊 Dashboard</a>
+    <a href="#maquinas" data-view="maquinas">🏭 Máquinas</a>
+    <a href="#repuestos" data-view="repuestos">🔩 Repuestos</a>
+    <a href="#cambio" data-view="cambio">🛠️ Registrar cambio</a>
+    <a href="#historial" data-view="historial">📜 Historial</a>
+  </nav>
+  <div class="mode" id="modo"></div>
+  <button class="btn-sec" id="reset">↺ Restaurar datos demo</button>
+</aside>
+<main>
+  <section id="view-dashboard" class="view">
+    <h1>Dashboard</h1><p class="sub">Resumen de la planta (datos de ejemplo)</p>
+    <div class="kpis" id="kpis"></div>
+    <div class="grid2">
+      <div class="card"><h3>⚠️ Repuestos con stock bajo</h3><div id="dash-bajo"></div></div>
+      <div class="card"><h3>🕒 Últimos cambios</h3><div id="dash-ultimos"></div></div>
+    </div>
+  </section>
+  <section id="view-maquinas" class="view hidden">
+    <h1>Máquinas</h1><p class="sub">Máquina → Componente → Subcomponente</p>
+    <div class="card" id="arbol"></div>
+  </section>
+  <section id="view-repuestos" class="view hidden">
+    <h1>Repuestos</h1><p class="sub">Stock actual vs stock mínimo</p>
+    <input id="buscar-rep" class="input" placeholder="Buscar repuesto o código...">
+    <div class="card"><table><thead><tr><th>Código</th><th>Repuesto</th><th>Subcomponente</th><th>Stock</th><th>Mínimo</th><th>Estado</th></tr></thead><tbody id="tabla-rep"></tbody></table></div>
+  </section>
+  <section id="view-cambio" class="view hidden">
+    <h1>Registrar cambio de repuesto</h1><p class="sub">Descuenta stock y agrega al historial</p>
+    <form id="form-cambio" class="card form" novalidate>
+      <label>Máquina<select id="f-maquina" required></select></label>
+      <label>Componente<select id="f-componente" required></select></label>
+      <label>Subcomponente<select id="f-sub" required></select></label>
+      <label>Repuesto<select id="f-repuesto" required></select></label>
+      <label>Cantidad<input id="f-cantidad" type="number" min="1" step="1" value="1" required></label>
+      <label>Fecha<input id="f-fecha" type="date" required></label>
+      <label>Técnico<input id="f-tecnico" type="text" placeholder="Nombre del técnico" required></label>
+      <label class="full">Observación (opcional)<textarea id="f-obs" rows="2"></textarea></label>
+      <div class="full"><button class="btn" type="submit">Guardar cambio</button></div>
+      <div id="msg" class="full"></div>
+    </form>
+  </section>
+  <section id="view-historial" class="view hidden">
+    <h1>Historial de cambios</h1>
+    <div class="filtros">
+      <select id="h-maquina" class="input"></select>
+      <input id="h-desde" type="date" class="input" title="Desde">
+      <input id="h-hasta" type="date" class="input" title="Hasta">
+      <input id="h-texto" class="input" placeholder="Técnico o repuesto...">
+    </div>
+    <div class="card"><table><thead><tr><th>Fecha</th><th>Máquina</th><th>Componente / Sub</th><th>Repuesto</th><th>Cant.</th><th>Técnico</th><th>Obs.</th></tr></thead><tbody id="tabla-hist"></tbody></table></div>
+  </section>
+</main>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/data.js" defer></script>
+<script src="js/app.js" defer></script>
+</body></html>
