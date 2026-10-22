@@ -41,6 +41,10 @@ const usarSupabase = !!(cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY && window.supa
 const KEY = "mantoplan_demo_v1";
 const sb = usarSupabase ? window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY) : null;
 
+function traducir(m){
+  const t = {"Invalid login credentials":"Correo o contraseña incorrectos","Email not confirmed":"Aún no confirmas tu correo. Revisa tu bandeja de entrada","User already registered":"Ese correo ya tiene una cuenta"};
+  return t[m] || (/Password should be/i.test(m) ? "La contraseña debe tener al menos 6 caracteres" : m);
+}
 function load(){ const s = localStorage.getItem(KEY); if (s) return JSON.parse(s); const c = structuredClone(DEMO); localStorage.setItem(KEY, JSON.stringify(c)); return c; }
 function save(db){ localStorage.setItem(KEY, JSON.stringify(db)); }
 
@@ -60,7 +64,25 @@ window.DB = {
       r.stock -= c.cantidad; c.id = Math.max(0,...db.cambios.map(x=>x.id))+1; db.cambios.push(c); save(db); return c;
     }
     const {error} = await sb.rpc("registrar_cambio",{p_repuesto_id:c.repuesto_id,p_cantidad:c.cantidad,p_fecha:c.fecha,p_tecnico:c.tecnico,p_observacion:c.observacion});
-    if (error) throw new Error(error.message); return c;
+    if (error) throw new Error(error.message || "No se pudo registrar el cambio"); return c;
   },
+  // ---- Autenticación (solo modo Supabase) ----
+  async sesion(){ if (!sb) return null; const {data} = await sb.auth.getSession(); return data.session; },
+  async perfil(){
+    if (!sb) return null; const s = await this.sesion(); if (!s) return null;
+    const {data} = await sb.from("perfiles").select("nombre,rol").eq("id", s.user.id).maybeSingle();
+    return {email: s.user.email, nombre: data?.nombre || s.user.user_metadata?.nombre || s.user.email, rol: data?.rol || "tecnico"};
+  },
+  async crearCuenta(nombre, email, password){
+    const {data, error} = await sb.auth.signUp({email, password, options:{data:{nombre}, emailRedirectTo: location.origin + location.pathname}});
+    if (error) throw new Error(traducir(error.message));
+    return {requiereConfirmacion: !data.session};
+  },
+  async iniciarSesion(email, password){
+    const {error} = await sb.auth.signInWithPassword({email, password});
+    if (error) throw new Error(traducir(error.message));
+  },
+  async cerrarSesion(){ if (sb) await sb.auth.signOut(); },
+  usaAuth: !!sb,
   reset(){ localStorage.removeItem(KEY); }
 };
