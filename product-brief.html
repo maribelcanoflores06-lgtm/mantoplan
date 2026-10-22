@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
+@page{size:A4;margin:12mm}body{font-family:Segoe UI,Roboto,sans-serif;font-size:10.5px;color:#222;margin:0}
+h1{font-size:26px;margin:0}.ctx{color:#555;margin:2px 0 10px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}.n{padding:10px 12px;border-radius:4px;box-shadow:2px 3px 6px #0002;break-inside:avoid}
+.n h2{font-size:13px;margin:0 0 5px}.n ul{margin:0;padding-left:16px}.full{grid-column:1/-1}
+.y{background:#fff59d}.p{background:#f8bbd0}.b{background:#b3e5fc}.gr{background:#c5e1a5}.o{background:#ffcc80}.v{background:#d1c4e9}
+.us{background:#fff;border:1px dashed #999;padding:6px;margin:5px 0;border-radius:4px}table{border-collapse:collapse;width:100%}td{padding:2px 4px;vertical-align:top}
+</style></head><body>
+<div class="n y full"><h1>⚙️ MantoPlan</h1><div class="ctx">Gestión de mantenimiento · Planta textil (Perú) · Área de Mantenimiento — hilandería, preparación y tejeduría</div></div>
+<div class="g" style="margin-top:10px">
+<div class="n p full"><h2>📍 Situación actual</h2>La planner programa el mantenimiento en un sistema antiguo y en hojas de cálculo. No tiene visibilidad de componentes y subcomponentes por máquina, ni de repuestos y su stock; el historial de cambios está disperso y los quiebres de stock se detectan tarde.</div>
+<div class="n o"><h2>1. Problema</h2><ul><li>Sin trazabilidad de qué repuesto se cambió, en qué máquina y cuándo.</li><li>Stock desactualizado → paradas por falta de repuestos o sobrecompras.</li><li>Tiempo perdido consolidando Excel para planificar.</li></ul></div>
+<div class="n b"><h2>2. Usuario</h2><b>Principal:</b> planner / programadora de mantenimiento.<br><b>Secundarios:</b> técnicos (registran cambios) y jefe de mantenimiento (consulta KPIs y decide compras).</div>
+<div class="n gr full"><h2>3. Funcionalidades</h2><ul><li>Dashboard con KPIs: máquinas, repuestos con stock bajo, cambios del mes.</li><li>Árbol Máquina → Componente → Subcomponente → Repuestos.</li><li>Repuestos con stock y stock mínimo, con alerta visual.</li><li>Registro de cambio de repuesto con validaciones: descuenta stock y guarda en historial (mensaje verde/rojo).</li><li>Historial con filtros por máquina, fechas y técnico/repuesto.</li></ul></div>
+<div class="n v full"><h2>4. Datos e IA</h2><table>
+<tr><td><b>Máquina</b></td><td>id, código, nombre, área</td><td><b>Componente</b></td><td>id, máquina_id, nombre</td></tr>
+<tr><td><b>Subcomponente</b></td><td>id, componente_id, nombre</td><td><b>Repuesto</b></td><td>id, código, nombre, subcomponente_id, stock, stock_mínimo</td></tr>
+<tr><td><b>Cambio / Historial</b></td><td colspan=3>id, fecha, repuesto_id, cantidad, técnico, observación</td></tr></table>
+<b>IA:</b> predecir el consumo de repuestos según el historial y alertar antes del stock bajo; sugerir mantenimiento preventivo por máquina según la frecuencia de cambios.</div>
+<div class="n y"><h2>🚀 MVP v1 (lo urgente)</h2><ul><li>Catálogo de máquinas y árbol de componentes</li><li>Repuestos y alertas de stock mínimo</li><li>Registro de cambios + historial con filtros</li><li>Dashboard de KPIs</li></ul></div>
+<div class="n o"><h2>🔮 MVP v2</h2><ul><li>IA: predicción de consumo y sugerencia de preventivos</li><li>Reportes exportables (PDF/Excel)</li><li>Costos de repuestos y de mantenimiento por máquina</li><li>Login por rol</li></ul></div>
+<div class="n b full"><h2>📝 Historias de usuario</h2>
+<div class="us"><b>HU1.</b> Como <b>planner</b> quiero ver los repuestos con stock bajo para pedirlos antes de que paren las máquinas. <i>CA:</i> se marca en rojo cuando stock ≤ mínimo; el dashboard muestra el total.</div>
+<div class="us"><b>HU2.</b> Como <b>técnico</b> quiero registrar el cambio de un repuesto para que quede en el historial. <i>CA:</i> cantidad entera &gt; 0, fecha no futura, técnico obligatorio; descuenta stock; mensaje verde al guardar y rojo si falla o no hay stock.</div>
+<div class="us"><b>HU3.</b> Como <b>planner</b> quiero ver la estructura de cada máquina para saber qué repuestos usa cada subcomponente. <i>CA:</i> árbol desplegable máquina → componente → subcomponente con código y stock.</div>
+<div class="us"><b>HU4.</b> Como <b>jefe de mantenimiento</b> quiero filtrar el historial por máquina y fechas para analizar fallas recurrentes. <i>CA:</i> filtros combinables; "Sin resultados" si no hay coincidencias.</div></div>
+<div class="n gr"><h2>🧰 Stack y arquitectura</h2>HTML + CSS + JavaScript vanilla · Supabase (PostgreSQL, RLS, función <code>registrar_cambio</code>) · Modo demo con localStorage · Hosting estático en Vercel / GitHub Pages. Agente de Cursor/Antigravity con reglas en <code>.agents/rules</code>.</div>
+<div class="n p"><h2>📈 Métricas de éxito</h2><ul><li>100% de cambios registrados en la app (0 Excel)</li><li>−50% de quiebres de stock en 3 meses</li><li>Registrar un cambio en &lt; 1 minuto</li></ul></div>
+<div class="n y full"><h2>🔗 Links</h2><b>Repositorio:</b> https://github.com/maribelcanoflores06-lgtm/mantoplan &nbsp;·&nbsp; <b>Web:</b> https://mantoplan.vercel.app (por confirmar tras desplegar)</div>
+</div></body></html>
